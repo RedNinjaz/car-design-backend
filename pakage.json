@@ -1,6 +1,6 @@
 {
     "name": "car-design-backend",
-    "version": "1.0.0",
+    "version": "21.1.0",
     "description": "Backend for Car Design Hub image uploads",
     "main": "server.js",
     "scripts": {
