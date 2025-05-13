@@ -1,43 +1,31 @@
 const express = require('express');
-const multer = require('multer');
 const cors = require('cors');
-const path = require('path');
-const fs = require('fs');
+const multer = require('multer');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Enable CORS so frontend can send requests
+// Middleware
 app.use(cors());
+app.use(express.json());
 
-// Set static folder to serve uploaded images
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+// Multer setup for file uploads (uploads to 'uploads/' directory)
+const upload = multer({ dest: 'uploads/' });
 
-// Ensure uploads folder exists
-const uploadDir = path.join(__dirname, 'uploads');
-if (!fs.existsSync(uploadDir)) {
-    fs.mkdirSync(uploadDir);
-}
-
-// Multer setup
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => cb(null, 'uploads/'),
-    filename: (req, file, cb) => cb(null, Date.now() + '-' + file.originalname)
-});
-
-const upload = multer({ storage });
-
-// Upload route
+// Example file upload endpoint
 app.post('/upload', upload.single('file'), (req, res) => {
     if (!req.file) {
         return res.status(400).json({ error: 'No file uploaded' });
     }
+    res.json({ message: 'File uploaded successfully', filename: req.file.filename });
+});
 
-    const fileUrl = `https://${req.hostname}/uploads/${req.file.filename}`;
-    res.json({ url: fileUrl });
+// Basic route
+app.get('/', (req, res) => {
+    res.send('Car Design Hub backend is running.');
 });
 
 // Start server
 app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+    console.log(`Server is running on port ${PORT}`);
 });
